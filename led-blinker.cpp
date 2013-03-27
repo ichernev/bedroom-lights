@@ -26,7 +26,7 @@ void LedBlinker::loop() {
   }
 
   if (now - _last_changed > _cycle) {
-    _current_state = other(_current_state);
+    _current_state = 1 - _current_state;
     digitalWrite(_output, _current_state);
     _last_changed = now;
   }
