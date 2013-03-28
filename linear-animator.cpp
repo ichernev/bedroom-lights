@@ -7,7 +7,7 @@ void LinearAnimator::setup(bool loop, float cut_ends) {
 
 void LinearAnimator::reset(float from, float to, duration_t duration, bool keep_current) {
   if (keep_current) {
-    _start = millis() + (get() - from) / (to - from) * duration;
+    _start = millis() - (get() - from) / (to - from) * duration;
   } else {
     _start = millis();
   }
