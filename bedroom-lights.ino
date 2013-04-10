@@ -33,7 +33,7 @@ const duration_t STAY_ON = 60 * SECOND;
 const duration_t COLOR_LOOP_INTERVAL = 10 * SECOND;
 const duration_t MANUAL_OFF_HOLD = 10 * SECOND;
 const duration_t FADE_OUT_DURATION = 1.5 * SECOND;
-const duration_t FADE_IN_DURATION = 3 * SECOND;
+const duration_t FADE_IN_DURATION = 1.5 * SECOND;
 
 enum lights_mode_t { NORMAL = 0, MANUAL_OFF = 1, ALWAYS_ON = 2} lights_mode;
 moment_t end_manual_off;
