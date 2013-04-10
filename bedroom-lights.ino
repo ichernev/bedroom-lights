@@ -32,7 +32,8 @@ const float SATURATION = 0.5;
 const duration_t STAY_ON = 60 * SECOND;
 const duration_t COLOR_LOOP_INTERVAL = 10 * SECOND;
 const duration_t MANUAL_OFF_HOLD = 10 * SECOND;
-const duration_t FADE_DURATION = 1 * SECOND;
+const duration_t FADE_OUT_DURATION = 1.5 * SECOND;
+const duration_t FADE_IN_DURATION = 3 * SECOND;
 
 enum lights_mode_t { NORMAL = 0, MANUAL_OFF = 1, ALWAYS_ON = 2} lights_mode;
 moment_t end_manual_off;
@@ -56,7 +57,7 @@ void setup() {
   hue.setup(true, 0.0f);
   hue.reset(MIN_HUE, MAX_HUE, COLOR_LOOP_INTERVAL);
 
-  intensity.setup(false, 0.05f);
+  intensity.setup(false, 0.00f);
   intensity.reset(0, 0, 1);
 
   analogWrite(out_r, 0);
@@ -75,25 +76,18 @@ void loop() {
   dblClick.loop();
   motionSensor.loop();
 
-  // switch (lights_mode) {
-  //   case NORMAL: Dprint('.'); break;
-  //   case MANUAL_OFF: Dprint('X'); break;
-  //   case ALWAYS_ON: Dprint('@'); break;
-  //   default: Dprint('F'); break;
-  // }
-
   lights_mode_t new_mode = (lights_mode_t) dblClick.getClicks();
   switch (new_mode) {
     case MANUAL_OFF:
       Dprintln("mode 1");
       lights_mode = new_mode;
       end_manual_off = millis() + MANUAL_OFF_HOLD;
-      intensity.reset(1, 0, FADE_DURATION, true);
+      intensity.reset(1, 0, FADE_OUT_DURATION, true);
       break;
     case ALWAYS_ON:
       Dprintln("mode 2");
       lights_mode = new_mode;
-      intensity.reset(0, 1, FADE_DURATION, true);
+      intensity.reset(0, 1, FADE_IN_DURATION, true);
       break;
   }
   if (lights_mode == MANUAL_OFF && end_manual_off < millis()) {
@@ -106,12 +100,12 @@ void loop() {
       case 0:
         Dprintln("GOT 0");
         // analogWrite(led, 0);
-        intensity.reset(1, 0, FADE_DURATION, true);
+        intensity.reset(1, 0, FADE_OUT_DURATION, true);
         break;
       case 1:
         Dprintln("GOT 1");
         // analogWrite(led, 100);
-        intensity.reset(0, 1, FADE_DURATION, true);
+        intensity.reset(0, 1, FADE_IN_DURATION, true);
         break;
       default:
         break;
@@ -125,18 +119,6 @@ void loop() {
     }
   }
 
-  // switch (lights_mode) {
-  //   case MANUAL_OFF:
-  //     ledBlinker.cycle(100);
-  //     break;
-  //   case ALWAYS_ON:
-  //     ledBlinker.cycle(500);
-  //     break;
-  //   case NORMAL:
-  //     ledBlinker.cycle(1000);
-  //     break;
-  // }
-
   float r, g, b;
   hsv2rgb(hue.get(), SATURATION, scale_intensity(intensity.get()), &r, &g, &b);
 
@@ -148,7 +130,7 @@ void loop() {
 }
 
 float scale_intensity(float x) {
-  return x * x;
+  return pow(x, 10);
 }
 
 int scale(double x) {
